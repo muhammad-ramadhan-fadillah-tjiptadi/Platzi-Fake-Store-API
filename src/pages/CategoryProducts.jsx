@@ -1,0 +1,122 @@
+import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+import { Spinner } from "flowbite-react";
+import CardList from "../components/CardList";
+import FilterComp from "../components/FilterComp";
+import PaginationComp from "../components/PaginationComp";
+
+export default function CategoryProducts() {
+    // Mengambil data dari path dinamis, nama path dinamis disimpan di {}
+    const { categoryId } = useParams();
+    const [category, setCategory] = useState({});
+    const [products, setProducts] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [search, setSearch] = useState("")
+    const [currentPage, setCurrentPage] = useState(1);
+
+    const onPageChange = (page) => {
+        setCurrentPage(page);
+        // Refresh data di pagination
+        getCategoryProduct("https://api.escuelajs.co/api/v1/products/?categoryId=" + categoryId + "&limit=4" + "&offset=" + currentPage);
+    }
+
+    function updateSearchValue(value) {
+        // Simpan value dari prop updateSearchValue dari filtercomp.jsx ke state
+        setSearch(value);
+        if (value === "") {
+            // Jika search kosong, kembali ke mode pagination dengan limit 4
+            getCategoryProduct();
+        } else {
+            // Jika ada value, search tanpa limit
+            getCategoryProducts("https://api.escuelajs.co/api/v1/products/?categoryId=" + categoryId + "&title=" + value);
+        }
+    }
+
+    function sortProducts(type) {
+        // Copy data dari state untuk diproses untuk pengurutan fungsi js
+        const newProducts = [...products];
+        if (type == "Harga Termurah") {
+            // Fungsi JS untuk mengurutkan nilai number : .sort(-)
+            newProducts.sort((a, b) => a.price - b.price);
+        } else if (type == "Harga Termahal") {
+            newProducts.sort((a, b) => b.price - a.price);
+        } else if (type == "Alfabet A - Z") {
+            // Mengurutkan string : tolocaleCompare
+            newProducts.sort((a, b) => a.title.localeCompare(b.title));
+        } else if (type == "Alfabet Z - A") {
+            newProducts.sort((a, b) => b.title.localeCompare(a.title));
+        }
+        // Simpan hasil pengurutan ke state
+        setProducts(newProducts);
+    }
+
+    async function getCategoryProducts(url) {
+        try {
+            const response = await fetch(url);
+            if (!response.ok) {
+                throw new Error(`Response status: ${response.status}`);
+            }
+
+            const result = await response.json();
+            setProducts(result);
+        } catch (error) {
+            console.error(error.message);
+        }
+    }
+
+    async function getCategory() {
+        const url = "https://api.escuelajs.co/api/v1/categories/" + categoryId;
+        try {
+            const response = await fetch(url);
+            if (!response.ok) {
+                throw new Error(`Response status: ${response.status}`);
+            }
+
+            const result = await response.json();
+            // isi state categoryProducts dengan data dari API
+            setCategory(result);
+        } catch (error) {
+            console.error(error.message);
+        }
+    }
+
+    async function getCategoryProduct() {
+        const url = "https://api.escuelajs.co/api/v1/products/?categoryId=" + categoryId + "&limit=4" + "&offset=" + currentPage;
+        try {
+            const response = await fetch(url);
+            if (!response.ok) {
+                throw new Error(`Response status: ${response.status}`);
+            }
+
+            const result = await response.json();
+            // isi state categoryProducts dengan data dari API
+            setProducts(result);
+            setLoading(false);
+        } catch (error) {
+            console.error(error.message);
+        }
+    }
+
+    // Memanggil atau menjalankan getdata API pas baru buka halamannya
+    useEffect(() => {
+        getCategory();
+        getCategoryProduct();
+    }, []);
+
+    if (loading == true) {
+        return (
+            <div className="block mx-auto mt-60 w-100 text-center">
+                <Spinner />  Sedang memuat data...
+            </div>
+        )
+    }
+
+    return (
+        <>
+            <h1 className="text-3xl font-bold m-10">Produk Kategori {category.name}</h1>
+            <FilterComp updateSearchValue={updateSearchValue} sortProducts={sortProducts} />
+            <CardList data={products} type={"product"} />
+            <PaginationComp currentPage={currentPage} onPageChange={onPageChange} />
+        </>
+    )
+}
