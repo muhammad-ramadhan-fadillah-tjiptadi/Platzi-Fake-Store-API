@@ -1,8 +1,9 @@
 import { Button, Checkbox, Label, TextInput } from "flowbite-react";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { Toast, ToastToggle } from "flowbite-react";
 import { HiCheck, HiExclamation, HiX } from "react-icons/hi";
 import { useNavigate } from "react-router-dom";
+import { AuthContext } from "../context/AuthContext";
 
 export default function Login() {
     const [formValue, setFormValue] = useState({
@@ -18,7 +19,7 @@ export default function Login() {
             setError("Email dan Password harus diisi");
         } else {
             setError("");
-            // Lanjutkan ke fetchh api
+            // Lanjutkan ke fetch api
             authLogin();
         }
     }
@@ -42,6 +43,8 @@ export default function Login() {
             // Simpan token JWT ke local storage
             localStorage.setItem("access_token", result.access_token);
             localStorage.setItem("refresh_token", result.refresh_token);
+            // Ubah nilai isLogin jadi true yang ada di context
+            checkLogin();
             // Pindahkan halaman
             navigate("/cart");
         } catch (error) {
@@ -51,6 +54,9 @@ export default function Login() {
 
     // const untuk perpindahan halaman
     const navigate = useNavigate();
+
+    // Panggil context, ambil checkLogin dari context file AurhContext.jsx
+    const { checkLogin } = useContext(AuthContext);
     return (
         <>
             {

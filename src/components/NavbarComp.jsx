@@ -14,18 +14,19 @@ import {
     NavbarLink,
     NavbarToggle,
 } from "flowbite-react";
-import { Link } from "react-router-dom";
-import { useState } from "react";
-import { useEffect } from "react";
+import { Link, Navigate, useNavigate } from "react-router-dom";
+import { useContext } from "react";
+import { AuthContext } from "../context/AuthContext";
 
 export default function NavbarComp() {
-    const [isLogin, setIsLogin] = useState(false);
+    const { isLogin, logout } = useContext(AuthContext);
 
-    useEffect(() => {
-        if (localStorage.getItem("access_token")) {
-            setIsLogin(true);
-        }
-    }, []);
+    const navigate = useNavigate();
+    // Handler event click button logout
+    function handleClickLogout() {
+        logout();
+        navigate("/login");
+    }
     return (
         <Navbar fluid rounded>
             <NavbarBrand href="https://flowbite-react.com">
@@ -35,7 +36,7 @@ export default function NavbarComp() {
                 </span>
             </NavbarBrand>
             <div className="flex md:order-2">
-                <Link to="/login">
+                <Link to="/cart">
                     <FcPaid className="me-2 mt-1 text-3xl" />
                 </Link>
                 <Dropdown
@@ -63,8 +64,8 @@ export default function NavbarComp() {
                     <DropdownItem icon={HiLogout}>Sign out</DropdownItem>
                 </Dropdown>
                 {
-                    isLogin == true && (
-                        <Button color="red" className="ms-2">Logout</Button>
+                    isLogin != null && (
+                        <Button color="red" className="ms-2" onClick={handleClickLogout}>Logout</Button>
                     )
                 }
                 <NavbarToggle />
