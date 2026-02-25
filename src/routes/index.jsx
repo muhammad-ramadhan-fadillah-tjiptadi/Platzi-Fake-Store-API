@@ -6,6 +6,7 @@ import User from "../pages/User.jsx";
 import CategoryProducts from "../pages/CategoryProducts.jsx";
 import Login from "../pages/Login.jsx";
 import Cart from "../pages/Cart.jsx";
+import Checkout from "../pages/Checkout.jsx";
 import auth from "../middleware/auth.js";
 import guest from "../middleware/guest.js";
 
@@ -49,6 +50,10 @@ export const router = createBrowserRouter([
             {
                 path: "/cart",
                 element: <Cart />
+            },
+            {
+                path: "/checkout",
+                element: <Checkout />
             }
         ]
     }

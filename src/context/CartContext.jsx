@@ -1,9 +1,11 @@
 import { createContext, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 export const CartContext = createContext();
 
 export default function CartProvider({ children }) {
     const [cart, setCart] = useState([]);
+    const navigate = useNavigate();
 
     function updateCart(item, qty) {
         // Cek jika di cart sudah ada produk tersebut, jangan ditambahkan tapi update qty nya aja
@@ -62,11 +64,22 @@ export default function CartProvider({ children }) {
         setCart([]);
     }
 
+    function checkout() {
+        if (cart.length > 0) {
+            navigate("/checkout");
+        }
+    }
+
+    function finishPayment() {
+        setCart([]);
+        navigate("/");
+    }
+
     // Debugging
     // console.log(cart);
 
     return (
-        <CartContext.Provider value={{ cart, updateCart, updateQtyProduct, deleteProduct, deleteAll }}>
+        <CartContext.Provider value={{ cart, updateCart, updateQtyProduct, deleteProduct, deleteAll, checkout, finishPayment }}>
             {children}
         </CartContext.Provider>
     )

@@ -5,7 +5,7 @@ import { Button, ButtonGroup, Modal, ModalBody, ModalFooter, ModalHeader } from 
 import { FaTrash } from "react-icons/fa";
 
 export default function Cart() {
-    const { cart, updateQtyProduct, deleteProduct, deleteAll } = useContext(CartContext);
+    const { cart, updateQtyProduct, deleteProduct, deleteAll, checkout } = useContext(CartContext);
     return (
         <>
             <Card className="w-4xl block mx-auto my-15">
@@ -49,6 +49,13 @@ export default function Cart() {
                             ))
                         }
                     </ul>
+                    <div className="flex justify-end">
+                        {cart.length > 0 && (
+                            <Button color="green" onClick={() => checkout()}>
+                                Checkout
+                            </Button>
+                        )}
+                    </div>
                 </div>
             </Card>
         </>
