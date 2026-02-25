@@ -17,9 +17,12 @@ import {
 import { Link, Navigate, useNavigate } from "react-router-dom";
 import { useContext } from "react";
 import { AuthContext } from "../context/AuthContext";
+import { Badge } from "flowbite-react";
+import { CartContext } from "../context/CartContext";
 
 export default function NavbarComp() {
     const { isLogin, logout } = useContext(AuthContext);
+    const { cart } = useContext(CartContext);
 
     const navigate = useNavigate();
     // Handler event click button logout
@@ -32,13 +35,18 @@ export default function NavbarComp() {
             <NavbarBrand href="https://flowbite-react.com">
                 <img src={imgLogo} className="mr-3 h-6 sm:h-9" />
                 <span className="self-center whitespace-nowrap text-xl font-semibold dark:text-white">
-                    Platzi Fake Store
+                    <Link to="/">
+                        Platzi Fake Store
+                    </Link>
                 </span>
             </NavbarBrand>
             <div className="flex md:order-2">
-                <Link to="/cart">
-                    <FcPaid className="me-2 mt-1 text-3xl" />
-                </Link>
+                <div className="relative">
+                    <Badge color="failure" className="rounded-full absolute top-0 left-0">{cart.length}</Badge>
+                    <Link to="/cart">
+                        <FcPaid className="me-2 mt-1 text-3xl" />
+                    </Link>
+                </div>
                 <Dropdown
                     arrowIcon={false}
                     inline

@@ -79,7 +79,7 @@ export default function Login() {
                         <div className="mb-2 block">
                             <Label htmlFor="email1">Your email</Label>
                         </div>
-                        <TextInput id="email1" type="email" placeholder="name@flowbite.com" required onKeyUp={(e) => setFormValue({ ...formValue, email: e.target.value })} />
+                        <TextInput id="email1" type="email" placeholder="name@mail.com" required onKeyUp={(e) => setFormValue({ ...formValue, email: e.target.value })} />
                     </div>
                     <div>
                         <div className="mb-2 block">
