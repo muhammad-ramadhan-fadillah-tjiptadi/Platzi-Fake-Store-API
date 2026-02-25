@@ -1,7 +1,21 @@
 import CardComp from "./CardComp";
 import CardCommerceComp from "./CardCommerceComp";
+import ModalCartComp from "./ModalCartComp";
+import { useState } from "react";
 
 export default function CardList({ data, type, children }) {
+    const [openModal, setOpenModal] = useState(false);
+    const [product, setProduct] = useState({});
+
+    function handleOpenModal(item) {
+        setProduct(item);
+        setOpenModal(true);
+    }
+
+    function handleCloseModal() {
+        setOpenModal(false);
+    }
+
     return (
         <div className="w-4xl block mx-auto">
             {children}
@@ -10,10 +24,11 @@ export default function CardList({ data, type, children }) {
                     type == "category" ? (
                         <CardComp item={item} key={index} />
                     ) : (
-                    <CardCommerceComp item={item} key={index} />
+                        <CardCommerceComp item={item} key={index} handleOpenModal={handleOpenModal} />
                     )
                 )}
             </div>
+            <ModalCartComp openModal={openModal} handleCloseModal={handleCloseModal} item={product} />
         </div>
     );
 }
