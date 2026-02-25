@@ -30,11 +30,43 @@ export default function CartProvider({ children }) {
             }
             setCart([...cart, newProduct]);
         }
-        // Debugging
-        // console.log(cart);
     }
+
+    function updateQtyProduct(id, type) {
+        setCart((prev) => {
+            return prev.map((item) => {
+                // Cari yang id itemnya sesuai yang mau diupdate
+                if (item.id == id) {
+                    if (type === "+") {
+                        return { ...item, qty: item.qty + 1 };
+                    } else {
+                        // Jika pengurangan, pastikan 1 gabisa dikurangin lagi
+                        if (item.qty > 1) {
+                            return { ...item, qty: item.qty - 1 };
+                        }
+                    }
+                }
+                return item;
+            });
+        });
+    }
+
+    function deleteProduct(id) {
+        setCart((prev) => {
+            // Filter data cart, selain yang mau dihapus
+            return prev.filter((item) => item.id !== id);
+        })
+    }
+
+    function deleteAll() {
+        setCart([]);
+    }
+
+    // Debugging
+    // console.log(cart);
+
     return (
-        <CartContext.Provider value={{ cart, updateCart }}>
+        <CartContext.Provider value={{ cart, updateCart, updateQtyProduct, deleteProduct, deleteAll }}>
             {children}
         </CartContext.Provider>
     )

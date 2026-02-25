@@ -1,17 +1,19 @@
 import { Card } from "flowbite-react";
 import { useContext } from "react";
 import { CartContext } from "../context/CartContext";
+import { Button, ButtonGroup, Modal, ModalBody, ModalFooter, ModalHeader } from "flowbite-react";
+import { FaTrash } from "react-icons/fa";
 
 export default function Cart() {
-    const { cart } = useContext(CartContext);
+    const { cart, updateQtyProduct, deleteProduct, deleteAll } = useContext(CartContext);
     return (
         <>
             <Card className="w-4xl block mx-auto my-15">
                 <div className="mb-4 flex items-center justify-between">
                     <h5 className="text-xl font-bold leading-none text-gray-900 dark:text-white">Data Keranjang</h5>
-                    <a href="#" className="text-sm font-medium text-red-600 hover:underline dark:text-cyan-500">
+                    <p onClick={() => deleteAll()} className="text-sm font-medium text-red-600 hover:underline dark:text-red-500">
                         Kosongkan Keranjang
-                    </a>
+                    </p>
                 </div>
                 <div className="flow-root">
                     <ul className="divide-y divide-gray-200 dark:divide-gray-700">
@@ -34,6 +36,14 @@ export default function Cart() {
                                             </p>
                                         </div>
                                         <div className="inline-flex items-center text-base font-semibold text-gray-900 dark:text-white">${item.price}</div>
+                                    </div>
+                                    <div className="flex justify-end">
+                                        <ButtonGroup>
+                                            <Button color="blue" onClick={() => updateQtyProduct(item.id, "-")}>-</Button>
+                                            <Button color="alternative" disabled>{item.qty}</Button>
+                                            <Button color="blue" onClick={() => updateQtyProduct(item.id, "+")}>+</Button>
+                                        </ButtonGroup>
+                                        <FaTrash onClick={() => deleteProduct(item.id)} color="red " className="ms-2 text-xl mt-3"></FaTrash>
                                     </div>
                                 </li>
                             ))
