@@ -1,16 +1,23 @@
-import { Card } from "flowbite-react";
+import { Card, Button } from "flowbite-react";
 import { useContext } from "react";
 import { CartContext } from "../context/CartContext";
-import { Button } from "flowbite-react";
+import { useNavigate } from "react-router-dom";
 
 export default function Checkout() {
     const { cart, finishPayment } = useContext(CartContext);
+    const navigate = useNavigate();
+
     // Hitung total harga semua produk
     const totalHarga = cart.reduce((acc, item) => acc + (item.price * item.qty), 0);
     // Biaya aplikasi 11%
     const biayaAplikasi = totalHarga * 0.11;
     // Total akhir setelah ditambah biaya aplikasi
     const totalAkhir = totalHarga + biayaAplikasi;
+
+    function handleFinishPayment() {
+        finishPayment();
+        navigate("/", { state: { successPayment: true } });
+    }
 
     return (
         <>
@@ -63,7 +70,7 @@ export default function Checkout() {
 
                     <div className="flex justify-end mt-4">
                         {cart.length > 0 && (
-                            <Button color="green" onClick={() => finishPayment()}>
+                            <Button color="green" onClick={handleFinishPayment}>
                                 Selesaikan Pembayaran
                             </Button>
                         )}

@@ -1,19 +1,28 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import NavbarComp from "./components/NavbarComp";
 import BannerComp from "./components/BannerComp";
 import CardComp from "./components/CardComp";
 import CardList from "./components/CardList";
 import { Button } from "flowbite-react";
-import { Link } from "react-router-dom";
-import { useEffect } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Spinner } from "flowbite-react";
+import ModalPaymentCheckout from "./components/ModalPaymentCheckout";
 
 export default function App() {
   const [categoryProducts, setCategoryProducts] = useState([]);
-
   const [products, setProducts] = useState([]);
-
   const [loading, setLoading] = useState(true);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (location.state?.successPayment) {
+      setShowSuccessModal(true);
+      // Clear state dari history supaya tidak muncul lagi saat refresh
+      navigate("/", { replace: true, state: {} });
+    }
+  }, [location.state, navigate]);
 
   async function getDataCategories() {
     const url = "https://api.escuelajs.co/api/v1/categories";
@@ -72,7 +81,7 @@ export default function App() {
         <CardList data={categoryProducts} type={"category"} />
         <CardList data={products} type={"product"}>
           <div className="flex justify-between mt-15">
-            <h1 className="text-2x1 font-bold">Daftar Produk Populer</h1>
+            <h1 className="text-2xl font-bold">Daftar Produk Populer</h1>
             <Link to="/products">
               <Button className="bg-gradient-to-r from-cyan-400 via-cyan-500 to-cyan-600 text-white hover:bg-gradient-to-br focus:ring-cyan-300">
                 Selengkapnya
@@ -81,6 +90,11 @@ export default function App() {
           </div>
         </CardList>
       </div>
+
+      <ModalPaymentCheckout
+        show={showSuccessModal}
+        onClose={() => setShowSuccessModal(false)}
+      />
     </>
   );
 }

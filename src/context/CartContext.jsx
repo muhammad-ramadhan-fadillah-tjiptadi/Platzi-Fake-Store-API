@@ -72,7 +72,6 @@ export default function CartProvider({ children }) {
 
     function finishPayment() {
         setCart([]);
-        navigate("/");
     }
 
     // Debugging
