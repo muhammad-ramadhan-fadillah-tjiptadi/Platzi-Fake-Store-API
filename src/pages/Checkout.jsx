@@ -1,22 +1,31 @@
 import { Card, Button } from "flowbite-react";
-import { useContext } from "react";
+import { useContext, useEffect, useRef } from "react";
 import { CartContext } from "../context/CartContext";
 import { useNavigate } from "react-router-dom";
 
 export default function Checkout() {
     const { cart, finishPayment } = useContext(CartContext);
     const navigate = useNavigate();
+    const isFinishing = useRef(false);
+
+    // Guard: jika cart kosong dan bukan sedang proses pembayaran, redirect ke /cart
+    useEffect(() => {
+        if (cart.length === 0 && !isFinishing.current) {
+            navigate("/");
+        }
+    }, [cart, navigate]);
 
     // Hitung total harga semua produk
     const totalHarga = cart.reduce((acc, item) => acc + (item.price * item.qty), 0);
     // Biaya aplikasi 11%
     const biayaAplikasi = totalHarga * 0.11;
-    // Total akhir setelah ditambah biaya aplikasi
+    // Total akhir setelah ditambah biaya aplikasi1 
     const totalAkhir = totalHarga + biayaAplikasi;
 
     function handleFinishPayment() {
-        finishPayment();
+        isFinishing.current = true;
         navigate("/", { state: { successPayment: true } });
+        finishPayment();
     }
 
     return (
